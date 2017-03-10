@@ -39,6 +39,8 @@ Tech
 > - Language : Java
 > - Project Setup : Spring Boot
 > - Server : Microsoft Azure (Ubuntu Instance)
+> - Web Server : nginx
+> - WAS : apache tomcat 8.5
 > - MariaDB
 > - Jenkins(CI)
 > - Maven (Build & Test & Dependency)
