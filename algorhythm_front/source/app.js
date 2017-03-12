@@ -1,5 +1,5 @@
 import { Router, Route, IndexRoute, Link, browserHistory, applyRouterMiddleware } from 'react-router'
-import { Home } from './layout/pages.react'
+import { Home, Login, Join } from './layout/pages.react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {useTransitions, withTransition} from 'react-router-transitions';
 
@@ -43,6 +43,8 @@ ReactDOM.render((
     <Route path="/" component={withTransition(App)}>
 	  <IndexRoute component={Home} />
 	  <Route path="/home" component={Home}/>
+	  <Route path="/loginForm" component={Login}/>
+	  <Route path="/join" component={Join}/>
     </Route>
   </Router>
 ), document.body);

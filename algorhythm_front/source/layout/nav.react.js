@@ -3,7 +3,7 @@ import { Collapse} from 'react-bootstrap';
 var React = require('react');
 
 var navData = [
-	{title: 'Home', path: '/'}
+	{title: 'Home', path: '/'}, {title: 'Login', path: '/loginForm'}, {title: 'Join', path: '/join'}
 ];
 
 
