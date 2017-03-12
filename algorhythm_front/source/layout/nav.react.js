@@ -1,9 +1,26 @@
 import { Link } from 'react-router';
 import { Collapse} from 'react-bootstrap';
+var LoginStore = require('../store/member/loginStore');
+var LoginAction = require('../action/member/loginAction');
 var React = require('react');
+var Router = require('react-router');
 
 var navData = [
-	{title: 'Home', path: '/'}, {title: 'Login', path: '/loginForm'}, {title: 'Join', path: '/join'}
+	{title: 'Home', path: '/'}
+];
+
+var notLoginNav = [{title: 'Login', path: '/loginForm'}, {title: 'Join', path: '/join'}];
+var loginNav = [
+	{ title: 'Logout', path: '', fun: function() {
+			$.ajax({
+				url: '/api/member/logout',
+				method: 'GET'
+			}).done(function() {
+				LoginAction.logoutProc();
+				Router.browserHistory.push('/');
+			})
+		}
+	}
 ];
 
 
@@ -14,10 +31,16 @@ var NavItem = React.createClass({
 		}
 		return '';
 	},
+	clickFunc: function() {
+		if(this.props.clickEvent)
+			this.props.clickEvent();
+		if(this.props.fun)
+			this.props.fun();
+	},
 	render: function() {
 		return (
-			<li onClick={this.props.clickEvent} className={this.isActived(this.props.nowpath)}>
-				<Link className="page-scroll" to={this.props.path} >{this.props.title}</Link>
+			<li onClick={this.clickFunc} className={this.isActived(this.props.nowpath)}>
+					<Link className="page-scroll" to={this.props.path} >{this.props.title}</Link>
 			</li>
 		);
 	}
@@ -26,8 +49,38 @@ var NavItem = React.createClass({
 
 var NavBar = React.createClass({
 	getInitialState: function() {
-		return {
-			open: false
+		return { 
+			open: false,
+			navData: navData.concat(notLoginNav),
+			isLogin: false
+		};
+	},
+	updateLoginState: function() {
+		if(LoginStore.isLogin()) {
+			this.setState({
+				navData: navData.concat(loginNav),
+				isLogin: LoginStore.isLogin()
+			});
+		} else {
+			this.setState({
+				navData: navData.concat(notLoginNav),
+				isLogin: LoginStore.isLogin()
+			});
+		}
+	},
+	componentWillMount: function() {
+		LoginStore.addChangeListener(this.updateLoginState);
+	},
+
+	componentDidMount: function() {
+		if(this.state.isLogin) {
+			this.setState({
+				navData: navData.concat(loginNav)
+			});
+		} else {
+			this.setState({
+				navData: navData.concat(notLoginNav)
+			});
 		}
 	},
 	closeCollapse: function() {
@@ -53,8 +106,8 @@ var NavBar = React.createClass({
 					<Collapse in={this.state.open}>
 						<div  id="devdogs-nav" className="navbar-collapse">
 							<ul className="nav navbar-nav navbar-right">
-								{navData.map(function(nav){
-									return <NavItem clickEvent={closeCollapse} nowpath={props.path.pathname} path={nav.path} title={nav.title} key={nav.title}/>
+								{this.state.navData.map(function(nav){
+									return <NavItem clickEvent={closeCollapse} nowpath={props.path.pathname} path={nav.path} title={nav.title} key={nav.title} fun={nav.fun}/>
 								})}
 							</ul>
 						</div>

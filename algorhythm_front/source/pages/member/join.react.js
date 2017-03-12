@@ -1,10 +1,32 @@
 import { Link } from 'react-router';
 import { CommentHeader } from '../../component/header-comment.react';
+
+var LoginStore = require('../../store/member/loginStore');
+var { browserHistory} = require('react-router');
 var React = require('react');
+var Router = require('react-router');
 
 
+var Join = React.createClass({
+    getInitialState: function() {
+        if(LoginStore.isLogin() == true) {
+            alert("로그인 중에는 할 수 없습니다.");
+            Router.browserHistory.push('/');
+            return;
+        }
+        return {
+            inputs: {}
+        }
+    },
 
-var Login = React.createClass({
+    handleChangeInputs: function(event) {
+        var inputs = this.state.inputs;
+        inputs[event.target.name] = event.target.value;
+        this.setState({
+            inputs: inputs
+        });
+    },
+
 	render: function() {
 		return (
 		<section id="join">
@@ -21,27 +43,27 @@ var Login = React.createClass({
                           <div className="form-group">
                             <label className="col-sm-2 control-label">이메일</label>
                             <div className="col-sm-10">
-                              <input type="email" className="form-control" name="email" placeholder="Email" />
+                              <input type="email" required className="form-control" name="email" placeholder="Email" />
                             </div>
                           </div>
                           <div className="form-group">
                             <label className="col-sm-2 control-label">비밀번호</label>
                             <div className="col-sm-10">
-                              <input type="password" className="form-control" name="password" placeholder="Password" />
+                              <input type="password" required className="form-control" name="password" placeholder="Password" />
                             </div>
                           </div>
 
                           <div className="form-group">
                             <label className="col-sm-2 control-label">비밀번호 확인</label>
                             <div className="col-sm-10">
-                              <input type="password" className="form-control" name="password_confirm" placeholder="Password Confirm" />
+                              <input type="password" required className="form-control" name="password_confirm" placeholder="Password Confirm" />
                             </div>
                           </div>
 
                           <div className="form-group">
                             <label className="col-sm-2 control-label">닉네임</label>
                             <div className="col-sm-10">
-                              <input type="password" className="form-control" name="password_confirm" placeholder="Nickname" />
+                              <input type="text" required className="form-control" name="password_confirm" placeholder="Nickname" />
                             </div>
                           </div>
                         </form>
@@ -76,4 +98,4 @@ var Login = React.createClass({
 	}
 });
 
-module.exports = Login;
+module.exports = Join;

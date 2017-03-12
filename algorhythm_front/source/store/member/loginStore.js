@@ -7,7 +7,7 @@ var email = '';
 var nickname = '';
 
 
-var loginProc = function(data) {
+var setData = function(data) {
 	loginState = data.loginState;
 	email = data.email;
 	nickname = data.nickname;
@@ -44,7 +44,11 @@ AppDispatcher.register(function (payload) {
 	var text;
 	switch (source) {
 		case "MEMBER_LOGIN":
-			loginProc(payload.data);
+			setData(payload.data);
+			LoginStore.emitChange();
+			break;
+		case "MEMBER_LOGOUT":
+			setData(payload.data);
 			LoginStore.emitChange();
 			break;
 		default:

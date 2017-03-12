@@ -6,6 +6,16 @@ var LoginActions = {
 			source: 'MEMBER_LOGIN',
 			data: data
 		});
+	},
+	logoutProc: function () {
+		AppDispatcher.dispatch({
+			source: 'MEMBER_LOGOUT',
+			data: {
+				loginState: false,
+				email: '',
+				nickname: ''
+			}
+		});
 	}
 }
 

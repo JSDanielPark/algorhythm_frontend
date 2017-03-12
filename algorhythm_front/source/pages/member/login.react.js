@@ -2,57 +2,59 @@ import { Link } from 'react-router';
 var React = require('react');
 
 var LoginStore = require('../../store/member/loginStore');
-console.log(LoginStore);
 var LoginAction = require('../../action/member/loginAction');
+var Router = require('react-router');
 
 var CODE_LOGIN_SUCCESS = 0;
 var CODE_LOGIN_FAIL = 1;
 
 var Login = React.createClass({
 	getInitialState: function() {
-		if(LoginStore.isLogin() == true) {
-			alert("로그인중");
+		if(LoginStore.isLogin()) {
+			alert("로그인 중에는 할 수 없습니다.");
+			Router.browserHistory.push('/');
+            return;
 		}
 		return {
-			inputEmail: '',
-			inputPw: ''
+			inputs: {}
 		}
 	},
 
-	handleChangeEmail: function(event) {
+	handleChangeInputs: function(event) {
+		var inputs = this.state.inputs;
+		inputs[event.target.name] = event.target.value;
 		this.setState({
-			inputEmail: event.target.value
-		});
-	},
-	handleChangePw: function(event) {
-		this.setState({
-			inputPw: event.target.value
+			inputs: inputs
 		});
 	},
 
-	loginProc: function() {
-		var email = this.state.inputEmail;
-		var pw = this.state.inputPw;
+	handleEnter: function(event) {
+		if(event.keyCode == 13) {
+			this.loginProc();
+		}
+	},
+
+	loginProc: function(e) {
+		var inputs = this.state.inputs;
 		$.ajax({
 			url: '/api/member/login',
-			data: {
-				email: email,
-				pw: pw
-			},
+			data: inputs,
 			method: 'POST'
 		}).done(function(resData, status) {
 			if(resData.result == CODE_LOGIN_SUCCESS) {
-				alert("로그인성공");
 				LoginAction.loginProc({
-					email: email,
+					email: inputs['email'],
 					loginState: true
 				});
+				Router.browserHistory.push('/');
 			} else {
-				alert("로그인 실패");
+				alert("아이디나 비밀번호가 틀립니다.");
 			}
 		}).error(function(resData, status) {
-			//alert(resData.error);
+			alert("에러가 발생하였습니다.");
 		});
+
+		e.preventDefault();
 	},
 
 	render: function() {
@@ -66,7 +68,7 @@ var Login = React.createClass({
                         <h3 className="panel-title"> 로그인</h3>
                     </div>
                     <div className="panel-body">
-                        <form role="form">
+                        <form role="form" onSubmit={this.loginProc} onsubmit="return false;">
                             <fieldset>
                                 <div className="form-group">
                                 	<div className="input-group">
@@ -74,8 +76,9 @@ var Login = React.createClass({
 									  	<i className="fa fa-user" aria-hidden="true"></i>
 									  </span>
 									  <input type="email" className="form-control" 
-									  placeholder="E-mail" autofocus 
-									  onChange={this.handleChangeEmail} value={this.state.inputEmail} />
+									  placeholder="E-mail" autofocus required name="email"
+									  onKeyPress={this.handleEnter}
+									  onChange={this.handleChangeInputs} value={this.state.inputEmail} />
 									</div>
 								</div>
                                 <div className="form-group">
@@ -83,11 +86,12 @@ var Login = React.createClass({
 									  <span className="input-group-addon" id="basic-addon1">
 									  	<i className="fa fa-lock" aria-hidden="true"></i>
 									  </span>
-									  <input type="password" className="form-control" placeholder="Password" 
-									   onChange={this.handleChangePw} value={this.state.inputPw} />
+									  <input type="password" required className="form-control" placeholder="Password" 
+									  	name="pw"
+									   onChange={this.handleChangeInputs} value={this.state.inputPw} onKeyPress={this.handleEnter}/>
 									</div>
                                 </div>
-                                <button type="button" onClick={this.loginProc} className="btn btn-lg btn-success btn-block">로그인</button>
+                                <button type="submit" className="btn btn-lg btn-success btn-block">로그인</button>
                             </fieldset>
                         </form>
                     </div>

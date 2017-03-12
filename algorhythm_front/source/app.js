@@ -2,6 +2,7 @@ import { Router, Route, IndexRoute, Link, browserHistory, applyRouterMiddleware 
 import { Home, Login, Join } from './layout/pages.react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {useTransitions, withTransition} from 'react-router-transitions';
+var LoginAction = require('./action/member/loginAction');
 
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -18,6 +19,15 @@ var App = React.createClass({
 	},
 	componentDidMount: function() {
 		window.sr = ScrollReveal();
+		$.ajax({
+			url: "/api/member/check/login",
+			method: "GET"
+		}).done(function(data, status) {
+			if(data.isLogin == "yes") {
+				data['loginState'] = true;
+				LoginAction.loginProc(data);
+			}
+		});
 	},
 	render: function() {
 		return (
