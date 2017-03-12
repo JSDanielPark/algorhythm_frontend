@@ -1,6 +1,6 @@
 var Home = require('../pages/home.react');
-var Login = require('../pages/login.react');
-var Join = require('../pages/join.react');
+var Login = require('../pages/member/login.react');
+var Join = require('../pages/member/join.react');
 
 module.exports = {
 	Home: Home,

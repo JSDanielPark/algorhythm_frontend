@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { CommentHeader } from '../component/header-comment.react';
+import { CommentHeader } from '../../component/header-comment.react';
 var React = require('react');
 
 

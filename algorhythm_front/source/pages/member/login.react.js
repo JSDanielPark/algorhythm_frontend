@@ -1,11 +1,18 @@
 import { Link } from 'react-router';
-import { CommentHeader } from '../../component/header-comment.react';
 var React = require('react');
 
+var LoginStore = require('../../store/member/loginStore');
+console.log(LoginStore);
+var LoginAction = require('../../action/member/loginAction');
 
+var CODE_LOGIN_SUCCESS = 0;
+var CODE_LOGIN_FAIL = 1;
 
 var Login = React.createClass({
 	getInitialState: function() {
+		if(LoginStore.isLogin() == true) {
+			alert("로그인중");
+		}
 		return {
 			inputEmail: '',
 			inputPw: ''
@@ -20,6 +27,31 @@ var Login = React.createClass({
 	handleChangePw: function(event) {
 		this.setState({
 			inputPw: event.target.value
+		});
+	},
+
+	loginProc: function() {
+		var email = this.state.inputEmail;
+		var pw = this.state.inputPw;
+		$.ajax({
+			url: '/api/member/login',
+			data: {
+				email: email,
+				pw: pw
+			},
+			method: 'POST'
+		}).done(function(resData, status) {
+			if(resData.result == CODE_LOGIN_SUCCESS) {
+				alert("로그인성공");
+				LoginAction.loginProc({
+					email: email,
+					loginState: true
+				});
+			} else {
+				alert("로그인 실패");
+			}
+		}).error(function(resData, status) {
+			//alert(resData.error);
 		});
 	},
 
@@ -55,7 +87,7 @@ var Login = React.createClass({
 									   onChange={this.handleChangePw} value={this.state.inputPw} />
 									</div>
                                 </div>
-                                <a href="index.html" className="btn btn-lg btn-success btn-block">로그인</a>
+                                <button type="button" onClick={this.loginProc} className="btn btn-lg btn-success btn-block">로그인</button>
                             </fieldset>
                         </form>
                     </div>
