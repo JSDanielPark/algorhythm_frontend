@@ -9,9 +9,12 @@ var navData = [
 	{title: 'Home', path: '/'}
 ];
 
-var notLoginNav = [{title: 'Login', path: '/loginForm'}, {title: 'Join', path: '/join'}];
+var notLoginNav = [{title: '로그인', path: '/member/loginForm'}, {title: '회원가입', path: '/member/join'}];
 var loginNav = [
-	{ title: 'Logout', path: '', fun: function() {
+	{title: '정보수정', path: '/member/modify'},
+	{title: '문제목록', path: '/exam/list'},
+	{title: '문제출제', path: '/exam/write'},
+	{ title: '로그아웃', path: '', fun: function() {
 			$.ajax({
 				url: '/api/member/logout',
 				method: 'GET'

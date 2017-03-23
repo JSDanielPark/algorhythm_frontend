@@ -13,17 +13,35 @@ var CODE_DUPLECATE_EMAIL = 1;
 
 var Join = React.createClass({
     getInitialState: function() {
-        if(LoginStore.isLogin() == true) {
-            alert("로그인 중에는 할 수 없습니다.");
-            Router.browserHistory.push('/');
-            return;
-        }
         return {
-            inputs: {},
-            msgs: {
-                email: ''
+            inputs: {
             }
         }
+    },
+
+    componentWillMount: function() {
+        var me = this;
+        $.ajax({
+            url: '/api/member/myinfo',
+            method: 'GET'
+        }).done(function(resData, status) {
+            if(resData.result == "success" && resData.info) {
+                me.setState({
+                    inputs: resData.info
+                });
+            } else {
+                alert("에러가 발생했습니다.");
+                location.href="/";
+            }
+        }).error(function(res, status) {
+            if(res.error) {
+                alert(res.error);
+                location.href="/";
+            } else {
+                alert("에러가 발생했습니다.");
+                location.href="/";
+            }
+        });
     },
 
     validateEmail: function() {
@@ -49,14 +67,6 @@ var Join = React.createClass({
         });
     },
 
-    validatePw: function() {
-
-    },
-
-    validateNickname: function() {
-
-    },
-
     handleChangeInputs: function(event) {
         var inputs = this.state.inputs;
         inputs[event.target.name] = event.target.value;
@@ -73,21 +83,20 @@ var Join = React.createClass({
         });
     },
 
-    joinProc: function(e) {
+    modifyProc: function(e) {
         var inputs = this.state.inputs;
-        if(inputs['pw'] != inputs['pw_confirm']) {
-            alert("비밀번호가 틀립니다.");
+        if(inputs['newPw'] != inputs['newPw_confirm']) {
+            alert("새 비밀번호가 서로 틀립니다.");
         } else {
             $.ajax({
-                url: '/api/member/join',
+                url: '/api/member/modifyMyinfo',
                 data: inputs,
                 method: 'POST'
             }).done(function(resData, status) {
-                if(resData.result == CODE_JOIN_SUCCESS) {
-                    alert("가입되셨습니다.");
-                    Router.browserHistory.push('/');
+                if(resData.result == "success") {
+                    alert("수정되었습니다.");
                 } else {
-                    alert(resData.errMsg);
+                    alert(resData.err);
                 }
             }).error(function(resData, status) {
                 alert("에러가 발생하였습니다.");
@@ -102,65 +111,55 @@ var Join = React.createClass({
             <div className="container">
                 <div className="row">
                     <div className="col-md-8 col-md-offset-2 text-center">
-                        <h2 className="section-heading">회원가입</h2>
+                        <h2 className="section-heading">정보수정</h2>
                         <hr className="primary" />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-8 col-md-offset-2 sr-contact">
-                        <form className="form-horizontal" onSubmit={this.joinProc}>
+                        <form className="form-horizontal" onSubmit={this.modifyProc}>
                           <div className="form-group">
                             <label className="col-sm-2 control-label">이메일</label>
                             <div className="col-sm-10">
                               <input type="email" required className="form-control" 
+                              value={this.state.inputs['email']} disabled="disabled"
                               onChange={this.handleChangeInputs} name="email" placeholder="Email" onBlur={this.validateEmail}/>
-                              <span className="msg-warning">{this.state.msgs['email']}</span>
                             </div>
                           </div>
-                          <div className="form-group">
-                            <label className="col-sm-2 control-label">비밀번호</label>
-                            <div className="col-sm-10">
-                              <input type="password" required className="form-control" 
-                              onChange={this.handleChangeInputs} name="pw" placeholder="Password" />
-                              <span className="msg-warning">{this.state.msgs['pw']}</span>
-                            </div>
-                          </div>
-
-                          <div className="form-group">
-                            <label className="col-sm-2 control-label">비밀번호 확인</label>
-                            <div className="col-sm-10">
-                              <input type="password" required className="form-control" 
-                              onChange={this.handleChangeInputs} name="pw_confirm" placeholder="Password Confirm" />
-                            </div>
-                          </div>
-
                           <div className="form-group">
                             <label className="col-sm-2 control-label">닉네임</label>
                             <div className="col-sm-10">
-                              <input type="text" required className="form-control" 
+                              <input type="text" required className="form-control" disabled="disabled"
+                              value={this.state.inputs['nickname']}
                               onChange={this.handleChangeInputs} name="nickname" placeholder="Nickname" />
-                              <span className="msg-warning">{this.state.msgs['nickname']}</span>
                             </div>
                           </div>
-                          <table className="table use-info-table">
-                            <thead>
-                                <tr><th colSpan={2}>개인정보 이용내역</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>이메일</th>
-                                    <td>개인식별, 이메일발송</td>
-                                </tr>
-                                <tr>
-                                    <td colSpan={2}>
-                                        <input type="checkbox" required onChange={this.handleCheckInputs} name="agree"/>
-                                        개인정보 이용에 동의합니다.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                          <div className="form-group">
+                            <label className="col-sm-2 control-label">기존 비밀번호</label>
+                            <div className="col-sm-10">
+                              <input type="password" required className="form-control" 
+                              onChange={this.handleChangeInputs} name="pw" placeholder="Password" />
+                            </div>
+                          </div>
+                          <div className="form-group">
+                            <label className="col-sm-2 control-label">새 비밀번호</label>
+                            <div className="col-sm-10">
+                              <input type="password" required className="form-control" 
+                              onChange={this.handleChangeInputs} name="newPw" placeholder="Password" />
+                            </div>
+                          </div>
+
+                          <div className="form-group">
+                            <label className="col-sm-2 control-label">새 비밀번호 확인</label>
+                            <div className="col-sm-10">
+                              <input type="password" required className="form-control" 
+                              onChange={this.handleChangeInputs} name="newPw_confirm" placeholder="Password Confirm" />
+                            </div>
+                          </div>
+
                         <div className="text-center">
-                            <button type="submit" className="btn btn-primary btn-lg">회원가입</button>
+                            <button type="submit" className="btn btn-success btn-lg">정보수정</button>
+                            <button type="button" className="btn btn-primary btn-lg">회원탈퇴</button>
                         </div>
                         </form>
                     </div>

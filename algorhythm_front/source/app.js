@@ -1,5 +1,5 @@
 import { Router, Route, IndexRoute, Link, browserHistory, applyRouterMiddleware } from 'react-router'
-import { Home, Login, Join } from './layout/pages.react'
+import { Home, Login, Join, Modify, ViewExam, ExamList, ExamWrite } from './layout/pages.react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {useTransitions, withTransition} from 'react-router-transitions';
 var LoginAction = require('./action/member/loginAction');
@@ -53,8 +53,12 @@ ReactDOM.render((
     <Route path="/" component={withTransition(App)}>
 	  <IndexRoute component={Home} />
 	  <Route path="/home" component={Home}/>
-	  <Route path="/loginForm" component={Login}/>
-	  <Route path="/join" component={Join}/>
+	  <Route path="/member/loginForm" component={Login}/>
+	  <Route path="/member/join" component={Join}/>
+	  <Route path="/member/modify" component={Modify}/>
+	  <Route path="/exam/view/:exam_no" component={ViewExam}/>
+	  <Route path="/exam/list" component={ExamList}/>
+	  <Route path="/exam/write" component={ExamWrite}/>
     </Route>
   </Router>
 ), document.body);
