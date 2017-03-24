@@ -1,7 +1,7 @@
 var AppDispatcher = require('../../dispatcher/AppDispatcher');
 
 
-var NewsActions = {
+var ExamActions = {
 	receiveBoardList: function (data) {
 		AppDispatcher.dispatch({
 			source: 'RECEIVE_BOARD_LIST',
@@ -17,4 +17,4 @@ var NewsActions = {
 	}
 }
 
-module.exports = NewsActions;
+module.exports = ExamActions;

@@ -1,10 +1,8 @@
 import { Pagination, FormGroup, InputGroup, FormControl, Button, Form, ControlLabel } from 'react-bootstrap';
 import { Link } from 'react-router';
 var React = require('react');
-
-var ExamStore = require('../store/exam/examStore');
-var ExamAction = require('../action/exam/examAction');
-
+var ExamStore = require('../store/exam/myExamStore');
+var ExamAction = require('../action/exam/myExamAction');
 var searchBtnStyle= {
 	backgroundColor: '#F05F40',
 	color: '#fff',
@@ -15,11 +13,12 @@ var searchBtnStyle= {
 
 var searchFieldStyle = { display: 'inline-block', width: 'auto' };
 
-var examListAjaxData = {
-	url: '/api/exam/list/1',
+var ajaxData = {
+	url: '/api/exam/my',
 	type: 'GET',
 	dataType: 'json',
 	data: {
+		page: 1
 	}
 };
 
@@ -37,6 +36,7 @@ var BoardItem = React.createClass({
 				</td>
 				<td className="text-left"><Link to={'/exam/view/'+ this.props.item.exam_no}>{this.props.item.subject}</Link></td>
 				<td>{this.props.item.dt}</td>
+				<td>{this.props.item.max_score}</td>
 			</tr>	
 		);
 	}
@@ -59,7 +59,7 @@ var TableBoard = React.createClass({
 	},
 	componentWillMount: function() {
 		ExamStore.addChangeListener(this.updateArticleState);
-		$.ajax(examListAjaxData).done(function(data, status) {
+		$.ajax(ajaxData).done(function(data, status) {
 			ExamAction.receiveBoardList(data);
 		}).error(function() {
 			alert('데이터를 불러오지 못했습니다.');
@@ -70,8 +70,8 @@ var TableBoard = React.createClass({
 	},
 
 	handleSelect(eventKey) {
-		examListAjaxData.url = '/api/exam/list/' + eventKey;
-		$.ajax(examListAjaxData).done(function(data, status) {
+		ajaxData.data.page = eventKey;
+		$.ajax(ajaxData).done(function(data, status) {
 			ExamAction.receiveBoardList(data);
 		}).error(function() {
 			alert('데이터를 불러오지 못했습니다.');
@@ -81,36 +81,18 @@ var TableBoard = React.createClass({
 		});
 	},
 
-	handleChangeSearch: function(event) {
-		this.setState({
-			searchString: event.target.value
-		});
-	},
-
-	search: function(evt) {
-		examListAjaxData.url = '/api/exam/list/1';
-		examListAjaxData.data.subject = this.state.searchString;
-		$.ajax(examListAjaxData).done(function(data, status) {
-			ExamAction.receiveBoardList(data);
-		}).error(function() {
-			alert('데이터를 불러오지 못했습니다.');
-		});
-		evt.preventDefault();
-		
-		this.setState({
-			activePage: 1
-		});
-	},
+	
 	render: function() {
 		return (
 		<div className="text-center">
 			<table className="table table-board">
 				<thead>
 					<tr>
-						<th className="text-center">번호</th>
+						<th className="text-center">문제번호</th>
 						<th className="text-center">난이도</th>
 						<th className="text-center">제목</th>
-						<th className="text-center">등록일</th>
+						<th className="text-center">제출일</th>
+						<th className="text-center">최고점수</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -124,17 +106,6 @@ var TableBoard = React.createClass({
 				maxButtons={5}
 				activePage={this.state.activePage}
 				onSelect={this.handleSelect} />
-
-			<div className="text-center">
-				<Form inline onSubmit={this.search}>
-					<FormGroup style={searchFieldStyle}>
-						<FormControl type="text" placeholder="검색" style={searchFieldStyle} onChange={this.handleChangeSearch} value={this.state.searchString}/>
-					</FormGroup>
-					<Button type="submit" style={searchBtnStyle}>
-						<i className="fa fa-search" aria-hidden="true"></i>
-					</Button>
-				</Form>
-			</div>
 		</div>
 		);
 	}

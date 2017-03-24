@@ -18,6 +18,7 @@ var ViewExam = React.createClass({
     componentWillMount: function() {
         var examNo = this.props.params.exam_no;
         var me = this;
+        
         $.ajax({
             url: '/api/exam/view/' + examNo,
             method: "GET"
@@ -28,16 +29,23 @@ var ViewExam = React.createClass({
         });
     },
     componentDidMount: function() {
-        var codeMirror = CodeMirror(this.refs.codemirror, {
-            value: "public class Solution {\n\tpublic static void main(String[] args){\n\t\tSystem.out.println(\"Hello World!\");\n\t}\n}",
-            lineNumbers: true,
-            matchBrackets: true,
-            mode: "text/x-java"
+        var me = this;
+        $.ajax({
+            url: '/api/template/java',
+            method: "GET"
+        }).done(function(data, status) {
+            var codeMirror = CodeMirror(me.refs.codemirror, {
+                value: data.template,
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: "text/x-java"
+            });
+            codeMirror.setOption("theme", "monokai");
+            me.setState({
+                codeMirror: codeMirror
+            });
         });
-        codeMirror.setOption("theme", "monokai");
-        this.setState({
-            codeMirror: codeMirror
-        });
+        
     },
     compile: function() {
         var me = this;
@@ -58,23 +66,31 @@ var ViewExam = React.createClass({
         });
     },
 
-    run: function() {
+    submit: function() {
         var me = this;
         if(confirm("제출하시겠습니까?")) {
             $.ajax({
-                url: '/api/exam/run',
+                url: '/api/exam/submit',
                 data: {
                     source: this.state.codeMirror.getValue(),
                     examNo: this.props.params.exam_no
                 },
                 method: "POST"
             }).done(function(data, status) {
-                me.setState({
-                    result: data.result
-                });
+                if(data.result=="success"){
+                    alert(data.totalScore + "점 입니다.");
+                    me.setState({
+                        result: data.output
+                    });
+                } else if(data.result == "fail") {
+                    alert(data.error);
+                } else {
+                    alert("에러가 발생했습니다.");
+                }
             });
         }
     },
+
 
     createContentMarkup: function() {
         return { __html: this.state.exam.content };
@@ -86,7 +102,7 @@ var ViewExam = React.createClass({
             star += "★";
         }
 		return (
-		<section id="exam">
+		<section id="examView">
             <div className="container">
                 <div className="row">
                     <div className="col-md-12 text-center">
@@ -104,6 +120,11 @@ var ViewExam = React.createClass({
                     <div className="col-md-12">
                         <div className="exam-test-area">
                             <p>예시</p>
+                            <div className="col-xs-12">
+                                <span className="plusinfo-horizontal">
+                                    * 첫 입력은 무조건 테스트케이스의 개수를 받아야합니다.
+                                </span>
+                            </div>
                             <div className="col-md-3">
                                 <label>입력</label>
                                 <pre>{this.state.exam.test_input}</pre>
@@ -120,7 +141,7 @@ var ViewExam = React.createClass({
                     </div>
                     <div className="col-xs-12 text-center">
                         <button className="btn btn-success btn-lg" onClick={this.compile}>컴파일</button>
-                        <button className="btn btn-success btn-lg" onClick={this.run}>제출</button>
+                        <button className="btn btn-success btn-lg" onClick={this.submit}>제출</button>
                     </div>
                 </div>
                 <div className="row">

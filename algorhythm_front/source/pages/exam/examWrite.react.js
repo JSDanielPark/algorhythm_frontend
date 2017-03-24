@@ -24,6 +24,7 @@ var Join = React.createClass({
         CKEDITOR.replace( 'ckeditor', {
             filebrowserUploadUrl: '/api/file/upload/photo'
         });
+        this.addTestcase();
     },
 
     addTestcase: function() {

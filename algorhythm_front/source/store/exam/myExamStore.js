@@ -11,7 +11,7 @@ var loadBoardData = function(data) {
 	maxPage = data.maxPage;
 }
 
-var ExamStore = assign({}, EventEmitter.prototype, {
+var MyExamStore = assign({}, EventEmitter.prototype, {
 	getArticles: function () {
 		return articles;
 	},
@@ -37,9 +37,9 @@ AppDispatcher.register(function (payload) {
 	var source = payload.source;
 	var text;
 	switch (source) {
-		case "RECEIVE_BOARD_LIST":
+		case "RECEIVE_MY_EXAM_LIST":
 			loadBoardData(payload.data);
-			ExamStore.emitChange();
+			MyExamStore.emitChange();
 			break;
 		default:
 			return true;
@@ -47,4 +47,4 @@ AppDispatcher.register(function (payload) {
 	return true;
 });
 
-module.exports = ExamStore;
+module.exports = MyExamStore;

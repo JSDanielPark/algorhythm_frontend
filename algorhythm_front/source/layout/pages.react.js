@@ -5,6 +5,9 @@ var Modify = require('../pages/member/modify.react');
 var ViewExam = require('../pages/exam/examView.react');
 var ExamList = require('../pages/exam/examList.react');
 var ExamWrite = require('../pages/exam/examWrite.react');
+var ExamRank = require('../pages/exam/examRank.react');
+var MyExam = require('../pages/exam/myExamList.react');
+
 
 module.exports = {
 	Home: Home,
@@ -13,5 +16,7 @@ module.exports = {
 	Modify: Modify,
 	ViewExam: ViewExam,
 	ExamList: ExamList,
-	ExamWrite: ExamWrite
+	ExamWrite: ExamWrite,
+	ExamRank: ExamRank,
+	MyExam: MyExam
 };
