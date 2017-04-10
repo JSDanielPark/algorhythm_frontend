@@ -34,6 +34,7 @@ var ViewExam = React.createClass({
             url: '/api/template/java',
             method: "GET"
         }).done(function(data, status) {
+            setTimeout(function() {
             var codeMirror = CodeMirror(me.refs.codemirror, {
                 value: data.template,
                 lineNumbers: true,
@@ -44,11 +45,13 @@ var ViewExam = React.createClass({
             me.setState({
                 codeMirror: codeMirror
             });
+            }, 1000);
         });
         
     },
     compile: function() {
         var me = this;
+        $(".mask").css("display", "block");
         $.ajax({
             url: '/api/exam/compile',
             data: {
@@ -63,12 +66,17 @@ var ViewExam = React.createClass({
                     result: data.error
                 });
             }
+            $(".mask").css("display", "none");
+        }).error(function() {
+            alert("에러가 발생했습니다.");
+            $(".mask").css("display", "none");
         });
     },
 
     submit: function() {
         var me = this;
         if(confirm("제출하시겠습니까?")) {
+            $(".mask").css("display", "block");
             $.ajax({
                 url: '/api/exam/submit',
                 data: {
@@ -87,6 +95,10 @@ var ViewExam = React.createClass({
                 } else {
                     alert("에러가 발생했습니다.");
                 }
+                $(".mask").css("display", "none");
+            }).error(function() {
+                alert("에러가 발생했습니다.");
+                $(".mask").css("display", "none");
             });
         }
     },

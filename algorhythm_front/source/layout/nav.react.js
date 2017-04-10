@@ -13,6 +13,7 @@ var notLoginNav = [{title: '명예의전당', path: '/exam/rank'}, {title: '로�
 var loginNav = [
 	{title: '문제목록', path: '/exam/list'},
 	{title: '문제출제', path: '/exam/write'},
+	{title: '명예의전당', path: '/exam/rank'},
 	{title: '내 문제', path: '/exam/my'},
 	{title: '정보수정', path: '/member/modify'},
 	{ title: '로그아웃', path: '', fun: function() {

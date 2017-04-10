@@ -32,6 +32,14 @@ var App = React.createClass({
 	render: function() {
 		return (
 			<span>
+
+				<div className="mask">
+					<div className="mask-wrap">
+						<div className="mask-content">
+						<img src="/img/loading2.gif" />
+						</div>
+					</div>
+				</div>
 				<Nav path={this.props.location}/>
 					{this.props.children}
 				<Footer />
